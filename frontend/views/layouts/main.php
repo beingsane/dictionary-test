@@ -21,9 +21,13 @@ AppAsset::register($this);
         <?= Html::csrfMetaTags() ?>
         <title><?= Yii::t('app', 'Dictionary') ?></title>
         <?php $this->head() ?>
+
+        <script>paceOptions = {ajax: {trackMethods: ['GET', 'POST']}};</script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/red/pace-theme-minimal.css" rel="stylesheet" />
     </head>
 
-    <body>
+    <body ng-controller="MainController">
         <?php $this->beginBody() ?>
 
         <div class="wrap">
@@ -40,7 +44,7 @@ AppAsset::register($this);
                         <a class="navbar-brand" href="#/">My Company</a>
                     </div>
 
-                    <div ng-class="!navCollapsed && 'in'" ng-click="navCollapsed=true" class="collapse navbar-collapse">
+                    <div ng-class="!navCollapsed && 'in'" ng-click="navCollapsed=true" class="collapse navbar-collapse" >
                         <ul class="navbar-nav navbar-right nav">
                             <li data-match-route="/$">
                                 <a href="#/">Home</a>
@@ -51,7 +55,13 @@ AppAsset::register($this);
                             <li data-match-route="/contact">
                                 <a href="#/contact">Contact</a>
                             </li>
-                            <li data-match-route="/login">
+                            <li data-match-route="/dashboard" ng-show="loggedIn()" class="ng-hide">
+                                <a href="#/dashboard">Dashboard</a>
+                            </li>
+                            <li ng-class="{active:isActive('/logout')}" ng-show="loggedIn()" ng-click="logout()"  class="ng-hide">
+                                <a href="">Logout</a>
+                            </li>
+                            <li data-match-route="/login" ng-hide="loggedIn()">
                                 <a href="#/login">Login</a>
                             </li>
                         </ul>

@@ -3,6 +3,7 @@
 namespace frontend\assets;
 
 use yii\web\AssetBundle;
+use yii\web\View;
 
 /**
  * Main frontend application asset bundle.
@@ -16,6 +17,7 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'js/app.js',
+        'js/controllers.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
