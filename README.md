@@ -6,6 +6,7 @@
 Запуск:
 ```bash
 composer install
+php init
 php yii migrate
 php yii migrate --migrationPath=@vendor/yiisoft/yii2/web/migrations
 php -S localhost:80 -t frontend/web
