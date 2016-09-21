@@ -42,8 +42,8 @@ AppAsset::register($this);
 
                     <div ng-class="!navCollapsed && 'in'" ng-click="navCollapsed=true" class="collapse navbar-collapse">
                         <ul class="navbar-nav navbar-right nav">
-                            <li data-match-route="/$">
-                                <a href="#/">Тест</a>
+                            <li data-match-route="/test">
+                                <a href="#/test">Тест</a>
                             </li>
                             <li ng-class="{active:isActive('/logout')}" ng-show="AuthService.isAuthorized()" ng-click="logout()"  class="ng-hide">
                                 <a href="">Выход ({{AuthService.getUsername()}})</a>

@@ -12,8 +12,9 @@ use yii\filters\auth\HttpBearerAuth;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use common\models\User;
 use frontend\models\StartTestForm;
+use common\models\User;
+use common\models\Test;
 
 /**
  * API controller
@@ -96,13 +97,36 @@ class ApiController extends Controller
 
             Yii::$app->user->login($user, 3600 * 24 * 30);
 
+
+            // this value can be taken from parameters of testing system or test type
+            // here it equals to total word count in the example word set
+            $questionCount = 17;
+
+            $test = new Test();
+            $test->user_id = $user->id;
+            $test->question_count = $questionCount;
+            $test->save();
+
+            Yii::$app->session->set('testId', $test->id);
+            Yii::$app->session->set('questionNumber', 1);
+
             return [
                 'username' => $user->username,
-                'access_token' => $user->getAuthKey(),
+                'accessToken' => Yii::$app->session->id,
             ];
         } else {
             $form->validate();
             return $form;
         }
+    }
+
+    /**
+     * Performs user logout
+     */
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+
+        return 'success';
     }
 }

@@ -21,11 +21,11 @@ return [
         ],
         'user' => [
             'identityClass' => 'common\models\User',
-            'enableSession' => false,
-            'loginUrl' => null,
+            'enableSession' => true,
         ],
         'session' => [
             // this is the name of the session cookie used for login on the frontend
+            'class' => 'yii\web\DbSession',
             'name' => 'advanced-frontend',
         ],
         'log' => [

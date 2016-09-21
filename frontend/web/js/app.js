@@ -16,44 +16,48 @@ var app = angular.module('app', [
 app.service('AuthService', ['$window', '$location',
     function($window) {
         this.isAuthorized = function($scope) {
-            return Boolean($window.sessionStorage.access_token);
+            return Boolean($window.sessionStorage.accessToken);
         };
 
         this.getUsername = function($scope) {
             return String($window.sessionStorage.username);
         };
 
-        this.login = function(username, access_token) {
+        this.login = function(username, accessToken) {
             $window.sessionStorage.username = username;
-            $window.sessionStorage.access_token = access_token;
+            $window.sessionStorage.accessToken = accessToken;
         }
 
         this.logout = function($scope) {
-            delete $window.sessionStorage.access_token;
+            delete $window.sessionStorage.accessToken;
         }
     }
 ]);
 
 app.config(['$routeProvider', '$httpProvider',
     function($routeProvider, $httpProvider) {
-        $routeProvider.
-            when('/', {
+        $routeProvider
+            .when('/', {
                 redirectTo: '/test',
-            }).
-            when('/test', {
+            })
+            .when('/test', {
                 templateUrl: 'views/site/test.html',
+                controller: 'SiteTest',
                 data: {
                     permissions: {
                         only: 'isAuthorized',
                         redirectTo: '/login',
                     }
                 }
-            }).
-            when('/login', {
+            })
+            .when('/login', {
                 templateUrl: 'views/site/login.html',
                 controller: 'SiteLogin'
-            }).
-            otherwise({
+            })
+            .when('/test2', {
+                templateUrl: 'views/site/test.html',
+            })
+            .otherwise({
                 templateUrl: 'views/site/404.html'
             });
         $httpProvider.interceptors.push('authInterceptor');
@@ -63,9 +67,9 @@ app.config(['$routeProvider', '$httpProvider',
 app.factory('authInterceptor', function ($q, $window, $location) {
     return {
         request: function (config) {
-            if ($window.sessionStorage.access_token) {
+            if ($window.sessionStorage.accessToken) {
                 //HttpBearerAuth
-                config.headers.Authorization = 'Bearer ' + $window.sessionStorage.access_token;
+                config.headers.Authorization = 'Bearer ' + $window.sessionStorage.accessToken;
             }
             return config;
         },
