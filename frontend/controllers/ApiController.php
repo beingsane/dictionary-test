@@ -100,13 +100,9 @@ class ApiController extends Controller
             Yii::$app->user->login($user, 3600 * 24 * 30);
 
 
-            // this value can be taken from parameters of testing system or test type
-            // here it equals to total word count in the example word set
-            $questionCount = 17;
-
             $test = new Test();
             $test->user_id = $user->id;
-            $test->question_count = $questionCount;
+            $test->question_count = Test::DEFAULT_QUESTION_COUNT;
             $test->save();
 
             Yii::$app->session->set('testId', $test->id);
@@ -149,8 +145,7 @@ class ApiController extends Controller
         $questionNumber++;
         Yii::$app->session->set('questionNumber', $questionNumber);
 
-        $answerCount = 4;
-        $words = Word::findWordsForQuestion($testId, $answerCount);
+        $words = Word::findWordsForQuestion($testId, Test::ANSWER_COUNT);
 
         if (count($words) === 0) {
             return ['result' => 'error', 'message' => 'Cannot find words for question'];
@@ -169,11 +164,11 @@ class ApiController extends Controller
      */
     private function generateQuestionData($words)
     {
-        $isEnglishQuestionWord = rand(0, 1);
+        $isEnglishWord = rand(0, 1);
 
         $questionWord = '';
         $answerWords = [];
-        if ($isEnglishQuestionWord) {
+        if ($isEnglishWord) {
             $questionWord = $words[0]->en;
             foreach ($words as $word) {
                 $answerWords[] = $word->ru;
@@ -189,6 +184,7 @@ class ApiController extends Controller
         shuffle($answerWords);
 
         $questionData = [
+            'type' => ($isEnglishWord ? 'en' : 'ru'),
             'questionWord' => $questionWord,
             'answerWords' => $answerWords,
         ];
@@ -212,17 +208,24 @@ class ApiController extends Controller
         $answer->test_id = $testId;
         $answer->question_number = $questionNumber;
         $answer->question_word = $questionData['questionWord'];
+        $answer->type = $questionData['type'];
 
         if (!$answer->validate()) {
             return $answer;
         }
 
         $answer->save();
+        $test = $answer->test;
+        if (!$answer->isCorrect()) {
+            if (!$test || $test->calcWrongAnswerCount() > Test::MAX_WRONG_ANSWERS) {
+                return ['result' => 'test_complete'];
+            }
+
+            return ['result' => 'wrong_answer'];
+        }
+
         Yii::$app->session->remove('questionData');
-
-
-        $test = Test::findOne($testId);
-        if ($test && $questionNumber >= $test->question_count) {
+        if (!$test || $questionNumber >= $test->question_count) {
             return ['result' => 'test_complete'];
         } else {
             return ['result' => 'next_question'];

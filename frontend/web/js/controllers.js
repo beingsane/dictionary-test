@@ -65,6 +65,8 @@ controllers.controller('SiteTest', ['$scope', '$http', '$route', '$location',
             $http.post('api/save-answer', $scope.answerData).success(function (data) {
                 if (data.result == 'next_question') {
                     $route.reload();
+                } else if (data.result == 'wrong_answer') {
+                    $scope.error['answer_word'] = 'Неправильный ответ';
                 } else if (data.result == 'test_complete') {
                     $location.path('/results').replace();
                 }
@@ -73,6 +75,10 @@ controllers.controller('SiteTest', ['$scope', '$http', '$route', '$location',
                     $scope.error[error.field] = error.message;
                 });
             });
+        }
+
+        $scope.clearErrors = function () {
+            $scope.error = [];
         }
     }
 ]);

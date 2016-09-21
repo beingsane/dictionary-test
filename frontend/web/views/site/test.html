@@ -13,15 +13,15 @@
             >
                 <div ng-repeat="answerWord in questionData.answerWords track by $index">
                     <label>
-                        <input ng-model="answerData.answer_word" value="{{answerWord}}" type="radio"/>
+                        <input ng-model="answerData.answer_word" value="{{answerWord}}" type="radio" ng-change="clearErrors()"/>
                         {{answerWord}}
                     </label>
                 </div>
-                <p class="help-block help-block-error" ng-show="error['answer_word'] && answerData.answer_word == ''">{{ error['answer_word'] }}</p>
+                <p class="help-block help-block-error" ng-show="error['answer_word'] && !answerForm.$touched">{{ error['answer_word'] }}</p>
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary" name="login-button">Сохранить</button>
+                <button type="submit" class="btn btn-primary" name="login-button" ng-click="clearErrors()">Сохранить</button>
             </div>
 
             <div class="alert alert-danger" ng-show="questionData.result == 'error'">{{questionData.message}}</div>
