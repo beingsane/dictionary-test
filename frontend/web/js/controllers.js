@@ -2,65 +2,33 @@
 
 var controllers = angular.module('controllers', []);
 
-controllers.controller('MainController', ['$scope', '$location', '$window', 'AuthService',
-    function ($scope, $location, $window, AuthService) {
-        $scope.loggedIn = function() {
-            return AuthService.isAuthorized();
-        };
+controllers.controller('MainController', ['$scope', '$location', 'AuthService',
+    function ($scope, $location, AuthService) {
+        $scope.AuthService = AuthService;
 
         $scope.logout = function () {
-            delete $window.sessionStorage.access_token;
+            AuthService.logout();
             $location.path('/login').replace();
         };
     }
 ]);
 
-controllers.controller('ContactController', ['$scope', '$http', '$window',
-    function($scope, $http, $window) {
-        $scope.captchaUrl = 'site/captcha';
-        $scope.contact = function () {
-            $scope.submitted = true;
-            $scope.error = {};
-            $http.post('api/contact', $scope.contactModel).success(
-                function (data) {
-                    $scope.contactModel = {};
-                    $scope.flash = data.flash;
-                    $window.scrollTo(0,0);
-                    $scope.submitted = false;
-                    $scope.captchaUrl = 'site/captcha' + '?' + new Date().getTime();
-            }).error(
-                function (data) {
-                    angular.forEach(data, function (error) {
-                        $scope.error[error.field] = error.message;
-                    });
-                }
-            );
-        };
-
-        $scope.refreshCaptcha = function() {
-            $http.get('site/captcha?refresh=1').success(function(data) {
-                $scope.captchaUrl = data.url;
-            });
-        };
-    }]);
-
-controllers.controller('DashboardController', ['$scope', '$http',
-    function ($scope, $http) {
-        $http.get('api/dashboard').success(function (data) {
-           $scope.dashboard = data;
-        })
-    }
-]);
-
-controllers.controller('LoginController', ['$scope', '$http', '$window', '$location',
-    function($scope, $http, $window, $location) {
+controllers.controller('SiteLogin', ['$scope', '$http', '$location', 'AuthService',
+    function($scope, $http, $location, AuthService) {
         $scope.login = function () {
             $scope.submitted = true;
             $scope.error = {};
-            $http.post('api/login', $scope.userModel).success(
+
+            $http.post('api/start-test', $scope.userModel).success(
                 function (data) {
-                    $window.sessionStorage.access_token = data.access_token;
-                    $location.path('/dashboard').replace();
+                    if (data.username && data.access_token) {
+                        AuthService.login(data.username, data.access_token);
+                        $location.path('/test').replace();
+                    } else {
+                        angular.forEach(data, function (error) {
+                            $scope.error['username'] = 'Something went wrong';
+                        });
+                    }
             }).error(
                 function (data) {
                     angular.forEach(data, function (error) {

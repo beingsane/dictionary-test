@@ -6,16 +6,14 @@ use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use common\models\LoginForm;
-use frontend\models\PasswordResetRequestForm;
-use frontend\models\ResetPasswordForm;
-use frontend\models\SignupForm;
-use frontend\models\ContactForm;
 
 use yii\rest\Controller;
 use yii\filters\auth\HttpBearerAuth;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
+use yii\helpers\ArrayHelper;
+use common\models\User;
+use frontend\models\StartTestForm;
 
 /**
  * API controller
@@ -73,43 +71,38 @@ class ApiController extends Controller
     }
 
     /**
-     * Displays homepage.
+     * Adds new user on test start and performs his login.
      *
      * @return mixed
      */
-    public function actionIndex()
+    public function actionStartTest()
     {
-        return 'test';
-    }
+        $data = Yii::$app->getRequest()->getBodyParams();
+        $form = new StartTestForm();
 
-    /**
-     * Performs user login.
-     *
-     * @return mixed
-     */
-    public function actionLogin()
-    {
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->getRequest()->getBodyParams(), '') && $model->login()) {
+        // We use default User model, so email and password have stub values
+
+        if ($form->load($data, '') && $form->validate()) {
+            $user = User::findOne(['username' => $form->username]);
+            if (!$user) {
+                $user = new User();
+                $user->username = $form->username;
+                $user->email = $form->username;
+                $user->setPassword('');
+                $user->generateAuthKey();
+
+                $user->save();
+            }
+
+            Yii::$app->user->login($user, 3600 * 24 * 30);
+
             return [
-                'access_token' => Yii::$app->user->identity->getAuthKey(),
+                'username' => $user->username,
+                'access_token' => $user->getAuthKey(),
             ];
         } else {
-            $model->validate();
-            return $model;
+            $form->validate();
+            return $form;
         }
-    }
-
-    /**
-     * Shows dashboard
-     */
-    public function actionDashboard()
-    {
-        $response = [
-            'username' => Yii::$app->user->identity->username,
-            'access_token' => Yii::$app->user->identity->getAuthKey(),
-        ];
-
-        return $response;
     }
 }

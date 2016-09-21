@@ -13,11 +13,24 @@ var app = angular.module('app', [
         });
     });
 
-app.service('AuthService', ['$window',
+app.service('AuthService', ['$window', '$location',
     function($window) {
-      this.isAuthorized = function($scope) {
-        return Boolean($window.sessionStorage.access_token);
-      };
+        this.isAuthorized = function($scope) {
+            return Boolean($window.sessionStorage.access_token);
+        };
+
+        this.getUsername = function($scope) {
+            return String($window.sessionStorage.username);
+        };
+
+        this.login = function(username, access_token) {
+            $window.sessionStorage.username = username;
+            $window.sessionStorage.access_token = access_token;
+        }
+
+        this.logout = function($scope) {
+            delete $window.sessionStorage.access_token;
+        }
     }
 ]);
 
@@ -25,7 +38,10 @@ app.config(['$routeProvider', '$httpProvider',
     function($routeProvider, $httpProvider) {
         $routeProvider.
             when('/', {
-                templateUrl: 'views/site/index.html',
+                redirectTo: '/test',
+            }).
+            when('/test', {
+                templateUrl: 'views/site/test.html',
                 data: {
                     permissions: {
                         only: 'isAuthorized',
@@ -33,20 +49,9 @@ app.config(['$routeProvider', '$httpProvider',
                     }
                 }
             }).
-            when('/about', {
-                templateUrl: 'views/site/about.html'
-            }).
-            when('/contact', {
-                templateUrl: 'views/site/contact.html',
-                controller: 'ContactController'
-            }).
             when('/login', {
                 templateUrl: 'views/site/login.html',
-                controller: 'LoginController'
-            }).
-            when('/dashboard', {
-                templateUrl: 'views/site/dashboard.html',
-                controller: 'DashboardController'
+                controller: 'SiteLogin'
             }).
             otherwise({
                 templateUrl: 'views/site/404.html'
