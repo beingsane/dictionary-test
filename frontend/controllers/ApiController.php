@@ -107,6 +107,7 @@ class ApiController extends Controller
 
             Yii::$app->session->set('testId', $test->id);
             Yii::$app->session->set('questionNumber', 0);
+            Yii::$app->session->set('testComplete', false);
 
             return [
                 'username' => $user->username,
@@ -133,6 +134,10 @@ class ApiController extends Controller
      */
     public function actionGetQuestionData()
     {
+        if (Yii::$app->session->get('testComplete')) {
+            return ['result' => 'error', 'message' => 'Test complete'];
+        }
+
         $questionData = Yii::$app->session->get('questionData');
         if ($questionData) {
             return $questionData;
@@ -198,6 +203,10 @@ class ApiController extends Controller
      */
     public function actionSaveAnswer()
     {
+        if (Yii::$app->session->get('testComplete')) {
+            return ['result' => 'error', 'message' => 'Test complete'];
+        }
+
         $data = Yii::$app->getRequest()->getBodyParams();
         $testId = Yii::$app->session->get('testId');
         $questionNumber = Yii::$app->session->get('questionNumber');
@@ -217,7 +226,9 @@ class ApiController extends Controller
         $answer->save();
         $test = $answer->test;
         if (!$answer->isCorrect()) {
-            if (!$test || $test->calcWrongAnswerCount() > Test::MAX_WRONG_ANSWERS) {
+            if (!$test || $test->calcWrongAnswerCount() >= Test::MAX_WRONG_ANSWERS) {
+                Yii::$app->session->remove('questionData');
+                Yii::$app->session->set('testComplete', true);
                 return ['result' => 'test_complete'];
             }
 
@@ -230,6 +241,25 @@ class ApiController extends Controller
         } else {
             return ['result' => 'next_question'];
         }
+    }
+
+    /**
+     * Returns answers for current test
+     */
+    public function actionGetAnswers()
+    {
+        if (!Yii::$app->session->get('testComplete')) {
+            return ['result' => 'error', 'message' => 'Test is not complete'];
+        }
+
+        $testId = Yii::$app->session->get('testId');
+        $answers = Answer::find()
+            ->select('type, question_number, question_word, answer_word, is_correct')
+            ->where(['test_id' => $testId])
+            ->asArray()
+            ->all();
+
+        return $answers;
     }
 
 }

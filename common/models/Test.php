@@ -17,7 +17,7 @@ use Yii;
 class Test extends \yii\db\ActiveRecord
 {
     // this values can be taken from parameters of testing system or test type
-    const DEFAULT_QUESTION_COUNT = 3;  // 17  // here it equals to total word count in the example word set
+    const DEFAULT_QUESTION_COUNT = 17;  // here it equals to total word count in the example word set
     const MAX_WRONG_ANSWERS = 3;
     const ANSWER_COUNT = 4;
 

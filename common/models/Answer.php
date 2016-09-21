@@ -67,25 +67,41 @@ class Answer extends \yii\db\ActiveRecord
         return $this->hasOne(Test::className(), ['id' => 'test_id']);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function beforeSave($insert)
     {
         $this->is_correct = $this->isCorrect();
         return parent::beforeSave($insert);
     }
 
-    public function isCorrect()
+    /**
+     * Determines if the answer is correct
+     * Stores the results in the is_correct property
+     * @param $reclac if to recalculate the result
+     * @return bool
+     */
+    public function isCorrect($recalc = false)
     {
-        $word = Word::findOne($this->question_word);
-        if (!$word) {
-            return false;
+        if ($this->is_correct === null || $recalc) {
+            $word = (
+                $this->type == 'en'
+                    ? Word::findOne($this->question_word)
+                    : Word::findOne(['ru' => $this->question_word])
+            );
+
+            if ($word) {
+                $this->is_correct = (
+                    $this->type == 'en'
+                        ? $word->en == $this->question_word && $word->ru == $this->answer_word
+                        : $word->ru == $this->question_word && $word->en == $this->answer_word
+                );
+            } else {
+                $this->is_correct = false;
+            }
         }
 
-        $isCorrect = (
-            $this->type == 'en'
-                ? $word->en == $this->question_word && $word->ru == $this->answer_word
-                : $word->ru == $this->question_word && $word->en == $this->answer_word
-        );
-
-        return $isCorrect;
+        return $this->is_correct;
     }
 }

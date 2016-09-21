@@ -45,14 +45,8 @@ controllers.controller('SiteLogin', ['$scope', '$http', '$location', 'AuthServic
 controllers.controller('SiteTest', ['$scope', '$http', '$route', '$location',
     function ($scope, $http, $route, $location) {
 
-        $scope.answerData = {
-            answer_word: ''
-        };
-
-        $scope.questionData = {
-            questionWord: '',
-            answerWords: []
-        };
+        $scope.answerData = {answerData: ''};
+        $scope.questionData = null;
 
         $http.get('api/get-question-data', $scope.answerData).success(function (data) {
             $scope.questionData = data;
@@ -79,6 +73,36 @@ controllers.controller('SiteTest', ['$scope', '$http', '$route', '$location',
 
         $scope.clearErrors = function () {
             $scope.error = [];
+        }
+    }
+]);
+
+
+controllers.controller('SiteResults', ['$scope', '$http',
+    function ($scope, $http) {
+        $scope.answers = [];
+        $http.get('api/get-answers', $scope.answerData).success(function (data) {
+            $scope.answers = data;
+        });
+
+        $scope.getTotalResult = function () {
+            var correctAnswers = [];
+            var totalAnswers = [];
+            for (var i in $scope.answers) {
+                var answer = $scope.answers[i];
+
+                if (totalAnswers.indexOf(answer.question_number) == -1) {
+                    totalAnswers.push(answer.question_number);
+                }
+
+                if (answer.is_correct == '1') {
+                    if (correctAnswers.indexOf(answer.question_number) == -1) {
+                        correctAnswers.push(answer.question_number);
+                    }
+                }
+            }
+
+            return correctAnswers.length + ' / ' + totalAnswers.length;
         }
     }
 ]);

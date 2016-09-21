@@ -54,8 +54,15 @@ app.config(['$routeProvider', '$httpProvider',
                 templateUrl: 'views/site/login.html',
                 controller: 'SiteLogin'
             })
-            .when('/test2', {
-                templateUrl: 'views/site/test.html',
+            .when('/results', {
+                templateUrl: 'views/site/results.html',
+                controller: 'SiteResults',
+                data: {
+                    permissions: {
+                        only: 'isAuthorized',
+                        redirectTo: '/login',
+                    }
+                }
             })
             .otherwise({
                 templateUrl: 'views/site/404.html'
