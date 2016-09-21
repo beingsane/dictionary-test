@@ -2,10 +2,10 @@
 
 var controllers = angular.module('controllers', []);
 
-controllers.controller('MainController', ['$scope', '$location', '$window',
-    function ($scope, $location, $window) {
+controllers.controller('MainController', ['$scope', '$location', '$window', 'AuthService',
+    function ($scope, $location, $window, AuthService) {
         $scope.loggedIn = function() {
-            return Boolean($window.sessionStorage.access_token);
+            return AuthService.isAuthorized();
         };
 
         $scope.logout = function () {

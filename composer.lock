@@ -4,81 +4,148 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "32df772ee8aadb4e0593c582620ba092",
-    "content-hash": "3ae97a32f975c181f076b6923161387d",
+    "hash": "d44ecba33115eb68d1e063e2a99ac9a2",
+    "content-hash": "786d55bdf419127733e07772996b8d56",
     "packages": [
         {
             "name": "bower-asset/angular",
-            "version": "v1.3.0",
+            "version": "v1.5.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/angular/bower-angular.git",
-                "reference": "992364cfc43aaa7755d5359c783aba0a2d1a5f4a"
+                "reference": "7e0e546eb6caedbb298c91a9f6bf7de7eeaa4ad2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/angular/bower-angular/zipball/992364cfc43aaa7755d5359c783aba0a2d1a5f4a",
-                "reference": "992364cfc43aaa7755d5359c783aba0a2d1a5f4a",
+                "url": "https://api.github.com/repos/angular/bower-angular/zipball/7e0e546eb6caedbb298c91a9f6bf7de7eeaa4ad2",
+                "reference": "7e0e546eb6caedbb298c91a9f6bf7de7eeaa4ad2",
                 "shasum": ""
             },
             "type": "bower-asset-library",
             "extra": {
-                "bower-asset-main": "./angular.js"
-            }
+                "bower-asset-main": "./angular.js",
+                "bower-asset-ignore": []
+            },
+            "license": [
+                "MIT"
+            ]
         },
         {
-            "name": "bower-asset/angular-route",
-            "version": "v1.3.0",
+            "name": "bower-asset/angular-permission",
+            "version": "v4.0.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/angular/bower-angular-route.git",
-                "reference": "73a3cc8371603e22e32b6dc5354116f73b91e164"
+                "url": "https://github.com/Narzerus/angular-permission.git",
+                "reference": "3e96de171d4118034c67b32bd67b2433a07f543d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/angular/bower-angular-route/zipball/73a3cc8371603e22e32b6dc5354116f73b91e164",
-                "reference": "73a3cc8371603e22e32b6dc5354116f73b91e164",
+                "url": "https://api.github.com/repos/Narzerus/angular-permission/zipball/3e96de171d4118034c67b32bd67b2433a07f543d",
+                "reference": "3e96de171d4118034c67b32bd67b2433a07f543d",
                 "shasum": ""
             },
             "require": {
-                "bower-asset/angular": "1.3.0"
+                "bower-asset/angular": ">=1.4.8"
+            },
+            "require-dev": {
+                "bower-asset/angular-mocks": "*",
+                "bower-asset/angular-route": "*",
+                "bower-asset/angular-ui-router": ">=0.2.11,<0.3.0|>=0.3.0,<0.4.0"
             },
             "type": "bower-asset-library",
             "extra": {
-                "bower-asset-main": "./angular-route.js"
-            }
+                "bower-asset-main": [
+                    "dist/angular-permission.js",
+                    "dist/angular-permission-ui.js",
+                    "dist/angular-permission-ng.js"
+                ],
+                "bower-asset-ignore": [
+                    "**/.*",
+                    "config",
+                    "test",
+                    "demo",
+                    "src",
+                    "Gruntfile.js",
+                    "index.js",
+                    "package.json",
+                    "CONTRIBUTING.md"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Fully featured role and permission based access control for your angular applications",
+            "keywords": [
+                "access",
+                "access-control",
+                "acl",
+                "angular",
+                "angular-route",
+                "ng-route",
+                "permissions",
+                "rbac",
+                "roles",
+                "route",
+                "ui-router"
+            ]
         },
         {
-            "name": "bower-asset/angular-strap",
-            "version": "v2.2.0",
+            "name": "bower-asset/angular-route",
+            "version": "v1.5.8",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mgcrea/angular-strap.git",
-                "reference": "5efdba49fc0fbbda26300927bc51eeb3550208ba"
+                "url": "https://github.com/angular/bower-angular-route.git",
+                "reference": "e96eff424fdd9689061659603ca59470375bf024"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mgcrea/angular-strap/zipball/5efdba49fc0fbbda26300927bc51eeb3550208ba",
-                "reference": "5efdba49fc0fbbda26300927bc51eeb3550208ba",
+                "url": "https://api.github.com/repos/angular/bower-angular-route/zipball/e96eff424fdd9689061659603ca59470375bf024",
+                "reference": "e96eff424fdd9689061659603ca59470375bf024",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/angular": "1.5.8"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "./angular-route.js",
+                "bower-asset-ignore": []
+            },
+            "license": [
+                "MIT"
+            ]
+        },
+        {
+            "name": "bower-asset/angular-strap",
+            "version": "v2.3.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mgcrea/angular-strap.git",
+                "reference": "29ca138afe34a37cb38e3855b97b46b87f008354"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mgcrea/angular-strap/zipball/29ca138afe34a37cb38e3855b97b46b87f008354",
+                "reference": "29ca138afe34a37cb38e3855b97b46b87f008354",
                 "shasum": ""
             },
             "require": {
                 "bower-asset/angular": ">=1.2.21,<2.0.0"
             },
             "require-dev": {
-                "bower-asset/angular-animate": ">=1.2.21,<2.0.0",
-                "bower-asset/angular-i18n": ">=1.2.21,<2.0.0",
-                "bower-asset/angular-mocks": ">=1.2.21,<2.0.0",
-                "bower-asset/angular-motion": ">=0.3.3,<0.4.0",
-                "bower-asset/angular-route": ">=1.2.21,<2.0.0",
-                "bower-asset/angular-sanitize": ">=1.2.21,<2.0.0",
-                "bower-asset/angular-scenario": ">=1.2.21,<2.0.0",
-                "bower-asset/bootstrap": ">=3.2.0,<4.0.0",
-                "bower-asset/bootstrap-additions": ">=0.2.3,<0.3.0",
-                "bower-asset/fastclick": ">=1.0.3,<2.0.0",
-                "bower-asset/font-awesome": ">=4.1.0,<5.0.0",
-                "bower-asset/highlightjs": ">=8.0.0,<9.0.0",
-                "bower-asset/jquery": ">=2.1.1,<3.0.0"
+                "bower-asset/angular-animate": "~1.5",
+                "bower-asset/angular-i18n": "~1.5",
+                "bower-asset/angular-mocks": "~1.5",
+                "bower-asset/angular-motion": ">=0.4.3,<0.5.0",
+                "bower-asset/angular-route": "~1.5",
+                "bower-asset/angular-sanitize": "~1.5",
+                "bower-asset/angular-scenario": "~1.5",
+                "bower-asset/bootstrap": ">=3.3.6,<4.0.0",
+                "bower-asset/bootstrap-additions": ">=0.3.1,<0.4.0",
+                "bower-asset/fastclick": ">=1.0.6,<2.0.0",
+                "bower-asset/font-awesome": ">=4.5.0,<5.0.0",
+                "bower-asset/highlightjs": ">=9.1.0,<10.0.0",
+                "bower-asset/jquery": ">=2.2.0,<3.0.0"
             },
             "type": "bower-asset-library",
             "extra": {
@@ -89,6 +156,7 @@
                 "bower-asset-ignore": [
                     "docs",
                     "test",
+                    "tasks",
                     "CONTRIBUTING.md"
                 ]
             },
