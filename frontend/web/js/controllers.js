@@ -42,8 +42,37 @@ controllers.controller('SiteLogin', ['$scope', '$http', '$location', 'AuthServic
 ]);
 
 
-controllers.controller('SiteTest', ['$scope', '$rootScope', 'AuthService',
-    function ($scope, $rootScope, AuthService) {
-        $scope.AuthService = AuthService;
+controllers.controller('SiteTest', ['$scope', '$http', '$route', '$location',
+    function ($scope, $http, $route, $location) {
+
+        $scope.answerData = {
+            answer_word: ''
+        };
+
+        $scope.questionData = {
+            questionWord: '',
+            answerWords: []
+        };
+
+        $http.get('api/get-question-data', $scope.answerData).success(function (data) {
+            $scope.questionData = data;
+        });
+
+
+        $scope.error = {};
+
+        $scope.saveAnswer = function() {
+            $http.post('api/save-answer', $scope.answerData).success(function (data) {
+                if (data.result == 'next_question') {
+                    $route.reload();
+                } else if (data.result == 'test_complete') {
+                    $location.path('/results').replace();
+                }
+            }).error(function (data) {
+                angular.forEach(data, function (error) {
+                    $scope.error[error.field] = error.message;
+                });
+            });
+        }
     }
 ]);

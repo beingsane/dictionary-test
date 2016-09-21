@@ -14,7 +14,9 @@ use yii\web\Response;
 use yii\helpers\ArrayHelper;
 use frontend\models\StartTestForm;
 use common\models\User;
+use common\models\Word;
 use common\models\Test;
+use common\models\Answer;
 
 /**
  * API controller
@@ -108,7 +110,7 @@ class ApiController extends Controller
             $test->save();
 
             Yii::$app->session->set('testId', $test->id);
-            Yii::$app->session->set('questionNumber', 1);
+            Yii::$app->session->set('questionNumber', 0);
 
             return [
                 'username' => $user->username,
@@ -129,4 +131,102 @@ class ApiController extends Controller
 
         return 'success';
     }
+
+    /**
+     * Returns data for current question
+     */
+    public function actionGetQuestionData()
+    {
+        $questionData = Yii::$app->session->get('questionData');
+        if ($questionData) {
+            return $questionData;
+        }
+
+
+        $testId = Yii::$app->session->get('testId');
+        $questionNumber = Yii::$app->session->get('questionNumber');
+
+        $questionNumber++;
+        Yii::$app->session->set('questionNumber', $questionNumber);
+
+        $answerCount = 4;
+        $words = Word::findWordsForQuestion($testId, $answerCount);
+
+        if (count($words) === 0) {
+            return ['result' => 'error', 'message' => 'Cannot find words for question'];
+        }
+
+        $questionData = $this->generateQuestionData($words);
+        Yii::$app->session->set('questionData', $questionData);
+
+        return $questionData;
+    }
+
+    /**
+     * Generate data for questions based on given words
+     * @param Word[] $words
+     * @return array
+     */
+    private function generateQuestionData($words)
+    {
+        $isEnglishQuestionWord = rand(0, 1);
+
+        $questionWord = '';
+        $answerWords = [];
+        if ($isEnglishQuestionWord) {
+            $questionWord = $words[0]->en;
+            foreach ($words as $word) {
+                $answerWords[] = $word->ru;
+            }
+        } else {
+            $questionWord = $words[0]->ru;
+            foreach ($words as $word) {
+                $answerWords[] = $word->en;
+            }
+        }
+
+        // additional shuffle so that right variant will not be always first
+        shuffle($answerWords);
+
+        $questionData = [
+            'questionWord' => $questionWord,
+            'answerWords' => $answerWords,
+        ];
+
+        return $questionData;
+    }
+
+
+    /**
+     * Saves answer into database
+     */
+    public function actionSaveAnswer()
+    {
+        $data = Yii::$app->getRequest()->getBodyParams();
+        $testId = Yii::$app->session->get('testId');
+        $questionNumber = Yii::$app->session->get('questionNumber');
+        $questionData = Yii::$app->session->get('questionData');
+
+        $answer = new Answer();
+        $answer->load($data, '');
+        $answer->test_id = $testId;
+        $answer->question_number = $questionNumber;
+        $answer->question_word = $questionData['questionWord'];
+
+        if (!$answer->validate()) {
+            return $answer;
+        }
+
+        $answer->save();
+        Yii::$app->session->remove('questionData');
+
+
+        $test = Test::findOne($testId);
+        if ($test && $questionNumber >= $test->question_count) {
+            return ['result' => 'test_complete'];
+        } else {
+            return ['result' => 'next_question'];
+        }
+    }
+
 }

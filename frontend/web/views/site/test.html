@@ -1,2 +1,30 @@
-<div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="h4">Выберите правильный перевод:</div>
+
+        <div class="h2">{{questionData.questionWord}}</div>
+        <br>
+
+        <form ng-submit="saveAnswer()" method="post">
+            <div class="form-group" ng-class="{
+                    'has-success': !error['answer_word'],
+                    'has-error': error['answer_word']
+                }"
+            >
+                <div ng-repeat="answerWord in questionData.answerWords track by $index">
+                    <label>
+                        <input ng-model="answerData.answer_word" value="{{answerWord}}" type="radio"/>
+                        {{answerWord}}
+                    </label>
+                </div>
+                <p class="help-block help-block-error" ng-show="error['answer_word'] && answerData.answer_word == ''">{{ error['answer_word'] }}</p>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" name="login-button">Сохранить</button>
+            </div>
+
+            <div class="alert alert-danger" ng-show="questionData.result == 'error'">{{questionData.message}}</div>
+        </form>
+    </div>
 </div>
